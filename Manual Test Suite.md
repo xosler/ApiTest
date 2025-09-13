@@ -9,10 +9,10 @@ A manager successfully reassigns a route if all constraints are met (no conflict
 **Expected:** The route is reassigned, an audit log entry is created, confirmation emails are sent, and the route is locked for 24 hours.
 
 **1.1.2 - Reassign route with a matching location type (indoor → indoor)**
-**Expected:** Successful reassignment.
+**Expected:** Successful reassignment and a success message.
 
 **1.1.3 - Reassign route with no time overlap between agents**
-**Expected:** Successful reassignment.
+**Expected:** Successful reassignment and a success message.
 
 ---
 
@@ -25,17 +25,17 @@ A manager successfully reassigns a route if all constraints are met (no conflict
 **Expected:** The system prevents the reassignment and displays an error message.
 
 **1.2.3 - Attempt reassignment with a mismatched location type (indoor → outdoor)**
-**Expected:** The system blocks the reassignment.
+**Expected:** The system should blocks the reassignment.
 
 **1.2.4 - Reassign a route that has already been locked in the past 24 hours**
-**Expected:** The action is denied with a clear error message.
+**Expected:** The action is denied with a error message.
 
 ---
 
 ### 1.3 Edge Cases
 
 **1.3.1 - Reassign a route at the exact minute of the campaign start time**
-**Expected:** Clarify if the action is allowed or blocked (assumption).
+**Expected:** The action is denied.
 
 **1.3.2 - Reassign to an agent with multiple non-overlapping routes**
 **Expected:** Allowed if the schedules do not overlap.
@@ -53,25 +53,29 @@ A manager successfully reassigns a route if all constraints are met (no conflict
 **1.4.2 - A regular agent attempts a reassignment (invalid role)**
 **Expected:** Denied, with a permission error.
 
-**1.4.3 - A system admin overrides the reassignment lock (if the feature exists)**
-**Expected:** Verify the expected behavior.
 
 ---
 
 ## 2. Test Data Table
 
-| Campaign   | Agent   | Route ID | Location Type | Schedule            | Notes                        |
-|------------|---------|----------|---------------|---------------------|------------------------------|
-| Campaign A | Agent X | R1       | Indoor        | 10:00–12:00, Day 1  | Source route                 |
-| Campaign B | Agent Y | R2       | Indoor        | 14:00–16:00, Day 1  | Valid reassignment           |
-| Campaign C | Agent Z | R3       | Outdoor       | 10:00–12:00, Day 1  | Overlap case                 |
-| Campaign D | Agent W | R4       | Indoor        | 10:00–12:00, Day 2  | Non-overlap case             |
-| Campaign E | Agent T | R5       | Indoor        | 09:00–11:00, Day 1  | Conflict with R1             |
-| Campaign F | Agent U | R6       | Indoor        | 11:59–12:01, Day 1  | Edge case (campaign overlap) |
+| Campaign   | Agent   | Route ID | Location Type | Schedule             | Notes                        |
+|------------|---------|----------|---------------|--------------------|-------------------------------|
+| Campaign A | Agent X | R1       | Indoor        | 10:00–12:00, Day 1 | Source route                  |
+| Campaign B | Agent Y | R2       | Indoor        | 14:00–16:00, Day 1 | Valid reassignment            |
+| Campaign C | Agent Z | R3       | Outdoor       | 10:00–12:00, Day 1 | Overlap case                  |
+| Campaign D | Agent W | R4       | Indoor        | 10:00–12:00, Day 2 | Non-overlap case              |
+| Campaign E | Agent T | R5       | Indoor        | 09:00–11:00, Day 1 | Conflict with R1              |
+| Campaign F | Agent U | R6       | Indoor        | 11:59–12:01, Day 1 | Edge case (campaign overlap)  |
 
-**Mapping examples:**
-- Test 1 → Campaign A (R1) → Reassign to Agent Y (R2)
-- Test 5 → Campaign A (R1) → Reassign to Agent T (R5)
+**Test Case Mapping Examples:**  
+- Test 1 → Campaign A (R1) → Reassign to Agent Y (R2)  
+- Test 2 → Campaign B (R2) → Reassign to Agent W (R4)  
+- Test 3 → Campaign C (R3) → Reassign to Agent X (R1) [Overlap case]  
+- Test 4 → Campaign D (R4) → Reassign to Agent Y (R2) [Non-overlapping]  
+- Test 5 → Campaign A (R1) → Reassign to Agent T (R5) [Conflict with R1]  
+- Test 6 → Campaign F (R6) → Reassign to Agent U (same route) [Edge case, overlapping time]  
+
+
 
 ---
 
@@ -88,8 +92,6 @@ A manager successfully reassigns a route if all constraints are met (no conflict
 - **Validation:**
   - Subject line: *“Route Reassignment Confirmation”*
   - The content includes the campaign, route ID, and schedule.
-- **Method:**
-  - Use a mock email inbox or a test email monitoring tool.
 
 ---
 
@@ -122,8 +124,7 @@ The reassignment was completed successfully; an audit log was created, and email
 
 **Assumptions:**
 - The campaign start time boundary (e.g., reassignment at the exact start minute) is clarified by the product team.
-- The audit log storage is synchronous (immediate visibility).
-- Emails are checked via a test inbox (not real agents).
+
 
 **Risks:**
 - Unhandled edge cases → inconsistent behavior at campaign start.
@@ -135,8 +136,8 @@ The reassignment was completed successfully; an audit log was created, and email
 ## 6. Regression Impact Checklist
 
 The following modules/flows could be indirectly affected:
-- Campaign Management (status changes, start time handling).
-- Agent Assignment Engine (scheduling conflicts).
-- Audit Logging (all features that write logs).
-- Email Notification System (any feature that triggers confirmation emails).
-- Route Locking Mechanism (potential impact on regular route updates).
+- Campaign Management 
+- Agent Assignment Engine 
+- Audit Logging 
+- Email Notification System 
+- Route Locking Mechanism 
