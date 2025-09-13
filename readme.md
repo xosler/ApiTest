@@ -21,7 +21,6 @@ cd ApiTest
 ```
 
 
-
 **Install the dependencies**
 > ⚠️ For security, install packages from before the September 2025 NPM attack:
 > ```bash
@@ -30,15 +29,12 @@ cd ApiTest
 
 ---
 
-
 ## Run
 First of all you need to create a local .env file, and put your auth key on the file.
-
 
 **How to run**
 ```bash
 npm run test
 ```
-
 
 The reports will be created at the Reports folder
