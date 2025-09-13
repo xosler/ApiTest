@@ -37,4 +37,7 @@ First of all you need to create a local .env file, and put your auth key on the 
 npm run test
 ```
 
-The reports will be created at the Reports folder
+The reports will be created in the foled
+```bash
+    cypress/reports/html/index.hml
+````
