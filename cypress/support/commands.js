@@ -42,3 +42,9 @@ Cypress.Commands.add('getReferenceData', () => {
     qs: { key: Cypress.env('CYPRESS_X_API_KEY') }
   });
 });
+
+Cypress.Commands.add('validateApiProperties', (response, properties = []) => {
+  properties.forEach((prop) => {
+    expect(response.body).to.have.property(prop);
+  });
+});

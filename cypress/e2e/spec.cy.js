@@ -29,23 +29,23 @@ describe('Open Charge Map API', () => {
 
         response.body.ChargerTypes.forEach(type => validateChargerType(type));
 
-        expect(response.body).to.have.property('ConnectionTypes');
-        expect(response.body).to.have.property('CurrentTypes');
-        expect(response.body).to.have.property('Countries');
-        expect(response.body).to.have.property('DataProviders');
-        expect(response.body).to.have.property('Operators');
-
-        expect(response.body).to.have.property('StatusTypes');
-        expect(response.body).to.have.property('SubmissionStatusTypes');
-        expect(response.body).to.have.property('UsageTypes');
-        expect(response.body).to.have.property('UserCommentTypes');
-        expect(response.body).to.have.property('CheckinStatusTypes');
-
-        expect(response.body).to.have.property('DataTypes');
-        expect(response.body).to.have.property('MetadataGroups');
-        expect(response.body).to.have.property('UserProfile');
-        expect(response.body).to.have.property('ChargePoint');
-        expect(response.body).to.have.property('UserComment');
+        cy.validateApiProperties(response, [
+          'ConnectionTypes',
+          'CurrentTypes',
+          'Countries',
+          'DataProviders',
+          'Operators',
+          'StatusTypes',
+          'SubmissionStatusTypes',
+          'UsageTypes',
+          'UserCommentTypes',
+          'CheckinStatusTypes',
+          'DataTypes',
+          'MetadataGroups',
+          'UserProfile',
+          'ChargePoint',
+          'UserComment'
+        ]);
 
       });
   });
